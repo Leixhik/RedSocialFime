@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Hola Fime</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+    <!-- Header -->
+    <header class="bg-fime-green text-white py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="img/logito.png" class="img-fluid" alt="Logo Fime" style="max-height: 40px;">
+                    <h1 class="h4 mb-0">Hola Fime</h1>
+                </div>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html" class="nav-link text-white px-2">Inicio</a>
+                    <a href="perfil.html" class="nav-link text-white px-2">Mi Perfil</a>
+                    <a href="favoritos.html" class="nav-link text-white">Favoritos</a>
+                </nav>
+            </div>
+        </div>
+        </div>
+    </header>
+
+    <!-- Mi Perfil -->
+    <div class="container mt-4">
+        <!-- Foto de portada -->
+        <div class="card mb-4">
+            <img src="img/portada.jpg" class="card-img-top" alt="Foto de portada"
+                style="max-height: 200px; object-fit: cover;">
+        </div>
+        <!-- Foto de perfil -->
+        <div class="card p-3 shadow-sm mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <img src="img/profilepic.png" class="rounded-circle" alt="Foto de perfil"
+                    style="width: 100px; height: 100px; object-fit: cover;">
+                <div>
+                    <h2 class="mb-0">Rodolfo Leija</h2>
+                    <p class="text-muted">Desarrollador de Software.</p>
+                </div>
+            </div>
+            <!-- Biografía -->
+            <div class="mt-3">
+                <h4>Información Personal</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Matrícula:</strong> 1822271</li>
+                    <li class="list-group-item"><strong>Estudios:</strong> Ingeniería en Tecnologías de Software.</li>
+                    <li class="list-group-item"><strong>Pasatiempos:</strong> Jugar Videojuegos, programar, leer.</li>
+                    <li class="list-group-item"><strong>Trabajos:</strong> Desarrollador web.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Publicaciones Recientes Ejemplo-->
+        <div class="card p-3 shadow-sm">
+            <h3 class="card-title mb-3">Mis Publicaciones</h3>
+            <div id="publicaciones" class="row g-3">
+                <!-- publicaciones con ajax -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Bienvenido a mi perfil.</p>
+                            <small class="text-muted">Hace 35 minutos</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS & Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

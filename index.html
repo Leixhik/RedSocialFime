@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Hola Fime</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.1 0.5/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+    <!-- Header -->
+    <header class="bg-fime-green text-white py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="img/logito.png" class="img-fluid" alt="Logo Fime" style="max-height: 40px;">
+                    <h1 class="h4 mb-0">Hola Fime</h1>
+                </div>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html" class="nav-link text-white px-2">Inicio</a>
+                    <a href="perfil.html" class="nav-link text-white px-2">Mi Perfil</a>
+                    <a href="favoritos.html" class="nav-link text-white">Favoritos</a>
+                   </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <div class="container mt-4">
+        <!-- Creacion de publicaciones -->
+        <div class="card p-3 shadow-sm mb-4">
+            <h3 class="card-title mb-3">Crear publicación</h3>
+            <textarea class="form-control mb-2" id="nuevaPublicacion" placeholder="¿En qué piensas?..."
+                rows="3"></textarea>
+            <button class="btn btn-success w-100" id="btnPublicar">Publicar</button>
+        </div>
+
+        <!-- Publicaciones recientes -->
+        <div class="card p-3 shadow-sm">
+            <h3 class="card-title mb-3">Publicaciones recientes</h3>
+            <div id="publicaciones" class="row g-3">
+                <!-- Publicaciones dinamicas con ajax -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JS y Bootstrap -->
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

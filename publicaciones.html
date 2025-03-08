@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Publicaciones - Hola Fime</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-light">
+    <!-- Header -->
+    <header class="bg-fime-green text-white py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="img/logito.png" class="img-fluid" alt="Logo Fime" style="max-height: 40px;">
+                    <h1 class="h4 mb-0">Hola Fime</h1>
+                </div>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html" class="nav-link text-white px-2">Inicio</a>
+                    <a href="perfil.html" class="nav-link text-white px-2">Mi Perfil</a>
+                    <a href="favoritos.html" class="nav-link text-white">Favoritos</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="container mt-4">
+        <!-- Sección de tus Publicaciones -->
+        <div class="card p-3 shadow-sm">
+            <h3 class="card-title mb-3">Tus publicaciones</h3>
+            <div class="row g-3">
+                <!-- Tarjeta de publicación 1 Ejemplo -->
+                <div class="col-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p>Los chilaquiles ya cuestan 60 varos</p>
+                            <small class="text-muted">Publicado por Rodolfo Leija #182271 hace 1 mes</small>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-hand-thumbs-up text-primary"></i> 0 Me gusta
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary me-2">
+                                        <i class="bi bi-chat"></i> 2 Comentarios
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-share"></i> 0 Compartir
+                                    </button>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Acciones
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item">Modificar</button></li>
+                                        <li><button class="dropdown-item">Borrar</button></li>
+                                        <li><button class="dropdown-item">Configuración</button></li>
+                                        <li><button class="dropdown-item">Reportar</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de publicación 2 Ejempolo -->
+                <div class="col-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p>Nomas vengo a fime a comer chilaquiles</p>
+                            <small class="text-muted">Publicado por Rodolfo Leija #1822271 hace 2 meses</small>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-hand-thumbs-up text-primary"></i> 0 Me gusta
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary me-2">
+                                        <i class="bi bi-chat"></i> 0 Comentarios
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-share"></i> 0 Compartir
+                                    </button>
+                                </div>
+                                <div class="dropdown">
+                                    <!-- Me falta el ícono de configuración -->
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Acciones
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item">Modificar</button></li>
+                                        <li><button class="dropdown-item">Borrar</button></li>
+                                        <li><button class="dropdown-item">Configuración</button></li>
+                                        <li><button class="dropdown-item">Reportar</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mis publicaciones -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
