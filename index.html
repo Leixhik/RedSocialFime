@@ -7,8 +7,9 @@
     <title>Inicio - Hola Fime</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.1 0.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
 </head>
 
 <body class="bg-light">
@@ -23,7 +24,7 @@
                 <nav class="d-flex align-items-center">
                     <a href="index.html" class="nav-link text-white px-2">Inicio</a>
                     <a href="perfil.html" class="nav-link text-white px-2">Mi Perfil</a>
-                    <a href="favoritos.html" class="nav-link text-white">Favoritos</a>
+                    <a href="favoritos.html" class="nav-link text-white">Me Gusta</a>
                 </nav>
             </div>
         </div>
@@ -39,7 +40,7 @@
             <button class="btn btn-success w-100" id="btnPublicar">Publicar</button>
         </div>
 
-        <!-- Publicaciones recientes -->
+        <!-- Publicaciones recientes Ejemplo 1 -->
         <div class="card shadow-sm p-4 mb-4">
             <!-- Persona de publicación -->
             <div class="d-flex align-items-center mb-3">
@@ -47,22 +48,26 @@
                 <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-3"
                     style="width: 40px; height: 40px; object-fit: cover;">
                 <div class="flex-grow-1">
-                    <h6 class="mb-0">Publicado por: Rodolfo Leija #1822271</h6>
-                    <span class="text-muted">Fecha: Hace un día</span>
+                    <h6 class="mb-0">Rodolfo Leija #1822271</h6>
+                    <span class="text-muted">Hace un día</span>
                 </div>
 
                 <!-- Configuración de publicación propia-->
-                <div class="dropdown" id="actionsMenu" style="display: none;">
-                    <i class="fas fa-ellipsis-v actions-menu" data-bs-toggle="dropdown" style="cursor: pointer;"></i>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="publicaciones.html">Editar</a></li>
-                        <li><a class="dropdown-item text-danger" href="#">Eliminar</a></li>
-                    </ul>
+                <div class="ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><button class="dropdown-item" onclick="">Editar</button></li>
+                            <li><button class="dropdown-item text-danger" onclick="/* Funcion para ir a página de Publicación */">Eliminar</button></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <!-- Content de la publicacion -->
-            <p>Este es un comentario de prueba en la publicación.</p>
+            <p>Estoy aprendiendo FrontEnd en programación web</p>
 
             <!-- Interacciones -->
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -77,13 +82,15 @@
             </div>
 
             <!-- Seccion de comentarios -->
+
+            <!-- Ejemplo 1 -->
             <div class="comment-section">
                 <!-- Ejemplo de un comentario existente -->
                 <div class="d-flex align-items-start mb-2">
                     <img src="img/people1.jpg" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;"
                         alt="ProfilePicturePerson">
                     <div class="bg-light p-2 rounded w-100">
-                        <strong>Usuario Ejemplo</strong>
+                        <strong>Karla Torres #1928373</strong>
                         <p class="mb-0">Na loco, que buen ejemplo</p>
                     </div>
                 </div>
@@ -96,6 +103,58 @@
                 <button class="btn btn-success ms-2">Enviar</button>
             </div>
         </div>
+
+        <!-- Publicaciones recientes Ejemplo 2 -->
+        <div class="card shadow-sm p-4 mb-4">
+            <!-- Persona de publicación -->
+            <div class="d-flex align-items-center mb-3">
+                <!-- foto de perfil -->
+                <img src="img/people2.jpg" alt="UserProfilePicture" class="rounded-circle me-3"
+                    style="width: 40px; height: 40px; object-fit: cover;">
+                <div class="flex-grow-1">
+                    <h6 class="mb-0">José Alberto #1928373</h6>
+                    <span class="text-muted">Hace una hora</span>
+                </div>
+            </div>
+
+            <!-- Content de la publicacion -->
+            <p>La programación es increíble</p>
+
+            <!-- Interacciones -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button class="btn btn-outline-primary me-2">
+                        <i class="fas fa-thumbs-up"></i> Me gusta <span class="badge bg-secondary">10</span>
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-comment"></i>Comentar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seccion de comentarios -->
+
+            <!-- Ejemplo 1 -->
+            <div class="comment-section">
+                <!-- Ejemplo de un comentario existente -->
+                <div class="d-flex align-items-start mb-2">
+                    <img src="img/people1.jpg" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;"
+                        alt="ProfilePicturePerson">
+                    <div class="bg-light p-2 rounded w-100">
+                        <strong>Karla Torres #1928373</strong>
+                        <p class="mb-0">A mi me cansa estudiar</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Área para escribir un comentario -->
+            <div class="d-flex align-items-center mt-2">
+                <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-2"
+                    style="width: 32px; height: 32px; object-fit: cover;">
+                <textarea class="form-control flex-grow-1" rows="1" placeholder="Escribe un comentario..." style="resize: none;"></textarea>
+                <button class="btn btn-success ms-2">Enviar</button>
+            </div>
+        </div>
+        
 
         <!-- JS y Bootstrap -->
         <script src="script.js"></script>

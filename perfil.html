@@ -22,11 +22,11 @@
                 <nav class="d-flex align-items-center">
                     <a href="index.html" class="nav-link text-white px-2">Inicio</a>
                     <a href="perfil.html" class="nav-link text-white px-2">Mi Perfil</a>
-                    <a href="favoritos.html" class="nav-link text-white">Favoritos</a>
+                    <a href="favoritos.html" class="nav-link text-white">Me Gusta</a>
                 </nav>
             </div>
         </div>
-        </div>
+
     </header>
 
     <!-- Mi Perfil -->
@@ -62,22 +62,98 @@
         <div class="card p-3 shadow-sm">
             <h3 class="card-title mb-3">Mis Publicaciones</h3>
             <div id="publicaciones" class="row g-3">
-                <!-- publicaciones con ajax -->
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <p>Bienvenido a mi perfil.</p>
-                            <small class="text-muted">Hace 35 minutos</small>
-                        </div>
+                <!-- Publicaciones recientes -->
+        <div class="card shadow-sm p-4 mb-4">
+            <!-- Persona de publicación -->
+            <div class="d-flex align-items-center mb-3">
+                <!-- foto de perfil -->
+                <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-3"
+                    style="width: 40px; height: 40px; object-fit: cover;">
+                <div class="flex-grow-1">
+                    <h6 class="mb-0">Rodolfo Leija #1822271</h6>
+                    <span class="text-muted">Hace un día</span>
+                </div>
+
+                <!-- Configuración de publicación propia-->
+                <div class="ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><button class="dropdown-item" onclick="">Editar</button></li>
+                            <li><button class="dropdown-item text-danger" onclick="/* Funcion para ir a página de Publicación */">Eliminar</button></li>
+                        </ul>
                     </div>
                 </div>
             </div>
+
+            <!-- Content de la publicacion -->
+            <p>Este es un comentario de prueba en la publicación.</p>
+
+            <!-- Interacciones -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button class="btn btn-outline-primary me-2">
+                        <i class="fas fa-thumbs-up"></i> Me gusta <span class="badge bg-secondary">10</span>
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-comment"></i>Comentar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seccion de comentarios -->
+            <div class="comment-section">
+                <!-- Ejemplo de un comentario existente -->
+                <div class="d-flex align-items-start mb-2">
+                    <img src="img/people1.jpg" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;"
+                        alt="ProfilePicturePerson">
+                    <div class="bg-light p-2 rounded w-100">
+                        <strong>Usuario Ejemplo</strong>
+                        <p class="mb-0">Na loco, que buen ejemplo</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Área para escribir un comentario -->
+            <div class="d-flex align-items-center mt-2">
+                <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-2"
+                    style="width: 32px; height: 32px; object-fit: cover;">
+                <textarea class="form-control flex-grow-1" rows="1" placeholder="Escribe un comentario..." style="resize: none;"></textarea>
+                <button class="btn btn-success ms-2">Enviar</button>
+            </div>
         </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- JS & Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Función para manejar "Me gusta" y "Comentar" por publicación
+        function setupPostInteractions(postId) {
+            let likeCount = parseInt(document.getElementById(`likeCount${postId}`).textContent);
+            const likeButton = document.getElementById(`likeButton${postId}`);
+            const likeCountDisplay = document.getElementById(`likeCount${postId}`);
+            const commentButton = document.getElementById(`commentButton${postId}`);
+            const commentTextarea = document.getElementById(`commentTextarea${postId}`);
+
+            likeButton.addEventListener("click", function() {
+                likeCount++;
+                likeCountDisplay.textContent = likeCount;
+            });
+
+            commentButton.addEventListener("click", function() {
+                commentTextarea.focus();
+            });
+        }
+
+        // Configurar interacciones para cada publicación
+        setupPostInteractions(1);
+        setupPostInteractions(2);
+    </script>
 </body>
 
 </html>

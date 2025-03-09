@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favoritos - Hola Fime</title>
+    <title>Tus Me Gusta - Hola Fime</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="styles.css">
@@ -22,7 +22,7 @@
                 <nav class="d-flex align-items-center">
                     <a href="index.html" class="nav-link text-white px-2">Inicio</a>
                     <a href="perfil.html" class="nav-link text-white px-2">Mi Perfil</a>
-                    <a href="favoritos.html" class="nav-link text-white">Favoritos</a>
+                    <a href="favoritos.html" class="nav-link text-white">Me Gusta</a>
                 </nav>
             </div>
         </div>
@@ -30,16 +30,46 @@
 
     <!-- Contenido de Favoritos -->
     <!-- Publicaciones Recientes ajax Ejemplo-->
-    <div class="card p-3 shadow-sm">
-        <h3 class="card-title mb-3">Mis Favoritos</h3>
-        <div id="favoritos" class="row g-3">
-            <!-- publicaciones favoritas con ajax -->
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <p>Vay día en FIME.</p>
-                        <small class="text-muted">Publicado hace 3 semanas</small>
+    <div class="w-75 p-3" style="overflow-y: auto;">
+        <div class="post mb-4 p-5 border">
+            <div class="d-flex align-items-center mb-2">
+                <img src="perfilP.webp" alt="Foto de perfil" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                <div class="ms-3">
+                    <strong>Jose99</strong>
+                    <p class="text-muted" style="font-size: 0.9rem;">Hace 2 horas</p>
+                </div>
+            </div>
+            <div class="post-content mb-3">
+                <p>¡Aquí está mi publicación! Es un día genial para aprender a programar y compartir con ustedes. ¿Alguien más está aprendiendo algo nuevo hoy?</p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
+                    <button class="btn btn-outline-primary me-2" type="button">
+                        <i class="bi bi-hand-thumbs-up"></i> Like
+                    </button>
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#commentSection">
+                        <i class="bi bi-chat-left-text"></i> Comentar
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <div class="collapse" id="commentSection">
+            <div class="mb-3 p-3 border-top">
+                <div class="comment mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="perfilP.webp" alt="Foto de perfil" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        <div class="ms-3">
+                            <strong>Maria123</strong>
+                            <p class="text-muted" style="font-size: 0.8rem;">Hace 1 hora</p>
+                        </div>
                     </div>
+                    <p>¡Sí! Yo también estoy aprendiendo a programar en Python. Es muy divertido.</p>
+                </div>
+    
+                <div class="d-flex align-items-center">
+                    <textarea rows="2" class="form-control" placeholder="Escribe un comentario..." style="width: 100%;"></textarea>
+                    <button class="btn btn-outline-success ms-2">Comentar</button>
                 </div>
             </div>
         </div>
