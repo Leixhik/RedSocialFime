@@ -1,85 +1,160 @@
 // Variables globales
-let usuarioActual = 'Rodolfo Eduardo Leija Pauli';
-let idUsuarioSolicitante = '1822271';
-let llaveSecreta = '5653714b-385d-4ce5-82a2-06e084a51034';
-let publicaciones = [];
-let comentarios = {};
+const idUsuarioSolicitante = 1822271;
+const llaveSecreta = '5653714b-385d-4ce5-82a2-06e084a51034';
+const urlDominio = "https://redsocial.luislepe.tech";
 
-// función ready para cargar publicaciones recientes
-$(document).ready(function() {
-    cargarPublicaciones();
-});
-
-// función para cargar publicaciones 
-function cargarPublicaciones(){
-    let url = window.location.pathname.includes('perfil.html')
-    ? `/api/Publicaciones/all/${idUsuarioSolicitante}/${idUsuaruioSolicitante}`
-    : `/api/Publicaciones/all/${idUsuarioSolicitante}`;
-
+$(document).ready(function () {
+// Función 1 - Cargar publicaciones
+function cargarPublicaciones() {
     $.ajax({
-        url: url,
-        method: 'GET',
-        success: function(response){ // Array de API 
-            publicaciones = response;
-            monstrarPublicaciones();
+        url: urlDominio + `/api/Publicaciones/all/1822271`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            // Limpiar contenedor para nuevos posts
+            $('#posts-container').empty();
+
+            // Verificar respuesta (si hay publicaciones)
+            if (response.length > 0) {
+                // forEach para cada publicacion
+                $.each(response, function (index, post) {
+
+                    // HTML para cada publicación
+                    let postHTML = `
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <h5 class="card-title mb-0">${post.nombre}</h5>
+                                </div>
+                                <h6 class="card-title mb-0"> ${post.idUsuario}</h6>
+                                <p class="card-text">${post.contenido}</p>
+                                <p class="text-muted small">${post.fecha || 'Fecha no disponible'}</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-hand-thumbs-up"></i> Me Gusta
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chat"></i> Comentar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    // Añadir publicacion al div
+                    $('#posts-container').append(postHTML);
+                });
+            } else {
+                // En caso de no haber (casi imposible)
+                $('#posts-container').html('<p class="text-muted">No hay publicaciones para mostrar.</p>');
+            }
         },
-        error: function(xhr, status, error){
-            console.log("Error al cargar publicaciones: ", error);
+        error: function (error) {
+            // Manejo de errores (por consola)
+            $('#posts-container').html('<p class="text-danger">Error al cargar las publicaciones.</p>');
+            console.log('Error en AJAX:', error);
         }
     });
 }
 
-// Mostrar publicaciones en el DOM
-function mostrarPublicaciones(){
-    let contenedor = $('.container.mt-4');
-    contenedor.html(''); // Para limpiar el contenido
+// Llamamos a la función al cargar la página
+cargarPublicaciones();
 
-    // Sección para la creación de publicaciones
-    let crearPub = $('.card.p-3.shadow-sm.mb-4').clone();
-    contenedor.append(crearPub);
-    $('#btnPublicar').on('click', crearPublicacion); // Evento para crear la publicación
+// Funcion 2 - Publicar un nuevo post
+function crearPublicacion(publicacion) {
+    $.ajax({
+        url: urlDominio + `/api/Publicaciones`,
+        method: "POST",
+        dataType: "json",
+        crossDomain: true,
+        contentType: "application/json",
+        data: JSON.stringify({
+            idPublicacion: 0,
+            idUsuario: idUsuarioSolicitante,
+            llave_Secreta: llaveSecreta,
+            contenido: publicacion
+        })
+    }).done(function (result) {
+        crearPublicacion(result);
+        $("#nuevaPublicacion").val('');
+    })
+        .fail(function (xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al publicar',
+                text: `Ocurrió un error al intentar publicar: ${error}`,
+            });
+        });
+}
+$("#btnPublicar").on("click", function () {
+    const contenido = $("#nuevaPublicacion").val();
+    if (contenido.trim() !== "") {
+        crearPublicacion(contenido);
+    } else {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No se puede publicar vacío',
+            text: 'Ingresa un contenido para tu publicación.',
+        });
+    }
+});
 
-    publicaciones.forEach(pub => {
-        // Para formatear la fecha
-        let fechaFormateada = new Date(pub.fechaCreacion).toLocaleString();
+// Función 3 - Ver mis publicaciones en perfil
+function miPublicacion() {
+    $.ajax({
+        url: urlDominio + `/api/Publicaciones/all/1822271/1822271`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            // Limpiar contenedor para nuevos posts
+            $('#posts-container-mio').empty();
 
-        // formato de la publicacion (como en el html)
-        let card = $(`
-            <div class="card shadow-sm p-4 mb-4">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
-                    <div class="flex-grow-1">
-                        <h6 class="mb-0">${pub.nombre} #${pub.idUsuario}</h6>
-                        <span class="text-muted">${fechaFormateada}</span>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-gear"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" onclick="editarPublicacion(${pub.idPublicacion})">Editar</button></li>
-                            <li><button class="dropdown-item text-danger" onclick="eliminarPublicacion(${pub.idPublicacion})">Eliminar</button></li>
-                        </ul>
-                    </div>
-                </div>
-                <p>${pub.contenido}</p>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    // <button class="btn btn-outline-primary me-2" onclick="darMeGusta(${pub.idPublicacion})"
-                        <i class="fas fa-thumbs-up"></i> Me gusta <span class="badge bg-secondary">${pub.cantidadComentarios || 0}</span>
-                    </button>
-                    <button class="btn btn-outline-secondary" onclick="mostrarComentarios(${pub.idPublicacion})">
-                        <i class="fas fa-comment"></i> Comentar
-                    </button>
-                </div>
-                <div id="comentarios-${pub.idPublicacion}" class="comment-section"></div>
-                <div class="d-flex align-items-center mt-2">
-                    <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                    <textarea class="form-control flex-grow-1" rows="1" id="comentario-${pub.idPublicacion}" placeholder="Escribe un comentario..." style="resize: none;"></textarea>
-                    <button class="btn btn-success ms-2" onclick="agregarComentario(${pub.idPublicacion})">Enviar</button>
-                </div>
-            </div>
-            `);
-            contenedor.append(card);
+            // Verificar respuesta (si hay publicaciones)
+            if (response.length > 0) {
+                // forEach para cada publicacion
+                $.each(response, function (index, post) {
+
+                    // HTML para cada publicación
+                    let postHTML = `
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <h5 class="card-title mb-0">${post.nombre}</h5>
+                                </div>
+                                <h6 class="card-title mb-0"> ${post.idUsuario}</h6>
+                                <p class="card-text">${post.contenido}</p>
+                                <p class="text-muted small">${post.fecha || 'Fecha no disponible'}</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-hand-thumbs-up"></i> Me Gusta
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chat"></i> Comentar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    // Añadir publicacion al div
+                    $('#posts-container-mio').append(postHTML);
+                });
+            } else {
+                // En caso de no haber (casi imposible)
+                $('#posts-container-mio').html('<p class="text-muted">No hay publicaciones para mostrar.</p>');
+            }
+        },
+        error: function (error) {
+            // Manejo de errores (por consola)
+            $('#posts-container').html('<p class="text-danger">Error al cargar las publicaciones.</p>');
+            console.log('Error en AJAX:', error);
+        }
     });
 }
 
+    // Llamamos a la función al cargar la página
+    miPublicacion();
+});
+
+// Funcion 4 - Editar Publicación
+function editarPublicacion(){
+
+}
