@@ -419,9 +419,8 @@ function toggleLike(idPublicacion, button) {
         },
         error: function(xhr) {
             if (xhr.status === 409) {
-                // Si ya existe el like, lo quitamos
                 $.ajax({
-                    url: urlDominio + `/api/Likes/${idPublicacion}`,
+                    url: urlDominio + `/api/Likes`,
                     method: 'DELETE',
                     dataType: 'json',
                     contentType: 'application/json',
@@ -507,3 +506,5 @@ function cargarPublicacionesFavoritas() {
 if (window.location.pathname.includes('favoritos.html')) {
     cargarPublicacionesFavoritas();
 }
+
+
