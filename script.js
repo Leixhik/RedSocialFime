@@ -2,6 +2,9 @@
 const idUsuarioSolicitante = 1822271;
 const llaveSecreta = '5653714b-385d-4ce5-82a2-06e084a51034';
 const urlDominio = "https://redsocial.luislepe.tech";
+const ultimaPublicacion = {
+    timestamp: 0
+};
 
 $(document).ready(function () {
     // Función 1 - Cargar publicaciones //Ya Jala
@@ -99,17 +102,42 @@ $(document).ready(function () {
             });
         });
     }
-    $("#btnPublicar").on("click", function () {  // Ya jala, da el error de.fail con aviso de contenido vacío.
+    $("#btnPublicar").on("click", function () {  // Ya jala
         const contenido = $("#nuevaPublicacion").val();
-        if (contenido.trim() !== "") {
-            crearPublicacion(contenido);
-        } else {
+        const tiempoActual = Date.now();
+        const tiempoTranscurrido = (tiempoActual - ultimaPublicacion.timestamp) / 1000;
+    
+        // Limites de Publicación y Límite de publicación por tiempo (1 minuto)
+        if (contenido.trim().length < 3) {
             Swal.fire({
                 icon: 'warning',
-                title: 'No se puede publicar vacío',
-                text: 'Ingresa un contenido para tu publicación.',
+                title: 'Publicación muy corta',
+                text: 'La publicación debe tener al menos 3 carácteres.',
             });
+            return;
         }
+    
+        if (contenido.trim().length > 500) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Publicación muy larga',
+                text: 'La publicación no puede exceder los 50 carácteres.',
+            });
+            return;
+        }
+    
+        if (tiempoTranscurrido <= 60) {
+            const tiempoRestante = Math.ceil(60 - tiempoTranscurrido);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Espera un momento',
+                text: `Debes esperar ${tiempoRestante} segundos antes de publicar nuevamente.`,
+            });
+            return;
+        }
+    
+        crearPublicacion(contenido);
+        ultimaPublicacion.timestamp = tiempoActual;
     });
 
     // Función 3 - Ver mis publicaciones en perfil + botón de editar y mandar a publicaciones.html // ya jala
@@ -173,7 +201,7 @@ $(document).ready(function () {
     miPublicacion();
 });
 
-// Funcion 4 - Editar Publicación
+// Funcion 4 - Ejecuta la función editar // Ya jala
 function editarPublicacion(idPublicacion) {
     // para guardar el ID de la publicación
     localStorage.setItem('editarPublicacionId', idPublicacion);
@@ -198,31 +226,41 @@ function cargarPublicacionParaEditar() {
                             <div class="card-body">
                                 <h3 class="card-title">Editar Publicación</h3>
                                 <div class="card mb-3 shadow-sm">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <h5 class="card-title mb-0">${post.nombre}</h5>
-                                        <div class="btn-group">
-                                            <button class="btn btn-primary btn-sm" class= "btnEditar" onclick="editarPublicacion(${post.idPublicacion})">
-                                                <i class="bi bi-pencil"></i> Editar
-                                            </button>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <h5 class="card-title mb-0">${post.nombre}</h5>
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi"></i> Opciones
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="mostrarFormularioEdicion('${post.contenido}', ${post.idPublicacion})">
+                                                        <i class="bi bi-pencil"></i> Editar
+                                                    </a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="eliminarPublicacion(${post.idPublicacion})">
+                                                        <i class="bi bi-trash"></i> Eliminar
+                                                    </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <h6 class="card-title mb-0">${post.idUsuario}</h6>
+                                        <p class="card-text">${post.contenido}</p>
+                                        <p class="text-muted small">${post.fechaCreacion}</p>
+                                        <div id="formularioEdicion_${post.idPublicacion}" style="display: none;">
+                                            <div class="mb-3">
+                                                <textarea class="form-control" id="editContenido" rows="3">${post.contenido}</textarea>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-primary" onclick="guardarEdicion(${post.idPublicacion})">
+                                                    Guardar cambios
+                                                </button>
+                                                <button class="btn btn-secondary" onclick="cancelarEdicion(${post.idPublicacion})">
+                                                    Cancelar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <h6 class="card-title mb-0">${post.idUsuario}</h6>
-                                    <p class="card-text">${post.contenido}</p>
-                                    <p class="text-muted small">${post.fechaCreacion}</p>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-hand-thumbs-up"></i> ${post.cantidadLikes} Me Gusta
-                                        </button>
-                                        <button class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
-                                        </button>
-                                    </div>
                                 </div>
-                            </div>
-                                <button class="btn btn-primary" onclick="guardarEdicion(${post.idPublicacion})">
-                                    Guardar cambios
-                                </button>
                             </div>
                         </div>
                     `;
@@ -247,8 +285,60 @@ function cargarPublicacionParaEditar() {
     }
 }
 
+// Funcion 5 - Editar publicacion
+function mostrarFormularioEdicion(contenido, idPublicacion) {
+    $(`#formularioEdicion_${idPublicacion}`).show();
+    $(`#editContenido`).val(contenido);
+}
 
-// Funcion 4.5 - Guardar publicacion
+function cancelarEdicion(idPublicacion) {
+    $(`#formularioEdicion_${idPublicacion}`).hide();
+}
+
+function eliminarPublicacion(idPublicacion) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "No podrás revertir esta acción",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: urlDominio + `/api/Publicaciones/${idPublicacion}`,
+                method: 'DELETE',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    idPublicacion: idPublicacion,
+                    idUsuario: idUsuarioSolicitante,
+                    llave_Secreta: llaveSecreta
+                }),
+                success: function(response) {
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'La publicación ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = 'perfil.html';
+                    });
+                },
+                error: function(error) {
+                    Swal.fire(
+                        'Error',
+                        'No se pudo eliminar la publicación',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+}
+
+// Funcion 5.5 - Guardar cambios publicacion editada
 function guardarEdicion(idPublicacion) {
     const nuevoContenido = $('#editContenido').val();
 
@@ -291,12 +381,7 @@ function guardarEdicion(idPublicacion) {
     });
 }
 
-// Add this at the end of your $(document).ready function
+// para cargar la publicación en la pagina de editar
 if (window.location.pathname.includes('publicaciones.html')) {
     cargarPublicacionParaEditar();
-}
-
-// funcion para likes
-function like() {
-
 }
