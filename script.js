@@ -43,8 +43,9 @@ $(document).ready(function () {
                                     <p class="card-text">${post.contenido}</p>
                                     <p class="text-muted small">${post.fechaCreacion}</p>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-hand-thumbs-up"></i>${post.cantidadLikes} Me Gusta
+                                        <button class="btn btn-outline-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
+                                            <i class="bi bi-hand-thumbs-up"></i>
+                                            <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                         </button>
                                         <button class="btn btn-outline-secondary btn-sm">
                                             <i class="bi bi-chat"></i>${post.cantidadComentarios} Comentar
@@ -171,8 +172,9 @@ $(document).ready(function () {
                                     <p class="card-text">${post.contenido}</p>
                                     <p class="text-muted small">${post.fechaCreacion}</p>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-hand-thumbs-up"></i> ${post.cantidadLikes} Me Gusta
+                                        <button class="btn btn-outline-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
+                                            <i class="bi bi-hand-thumbs-up"></i>
+                                            <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                         </button>
                                         <button class="btn btn-outline-secondary btn-sm">
                                             <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
@@ -384,4 +386,124 @@ function guardarEdicion(idPublicacion) {
 // para cargar la publicación en la pagina de editar
 if (window.location.pathname.includes('publicaciones.html')) {
     cargarPublicacionParaEditar();
+}
+
+// Función 6 - Likes
+function toggleLike(idPublicacion, button) {
+    $.ajax({
+        url: urlDominio + `/api/Likes`,
+        method: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            idPublicacion: idPublicacion,
+            idUsuario: idUsuarioSolicitante,
+            llave_Secreta: llaveSecreta
+        }),
+        success: function(response) {
+            const contadorLikes = $(button).find('.contador-likes');
+            const icono = $(button).find('i');
+            
+            // Toggle del botón
+            if ($(button).hasClass('btn-primary')) {
+                $(button).removeClass('btn-primary').addClass('btn-outline-primary');
+                icono.removeClass('bi-hand-thumbs-up-fill').addClass('bi-hand-thumbs-up');
+                const likesActuales = parseInt(contadorLikes.text()) - 1;
+                contadorLikes.text(likesActuales);
+            } else {
+                $(button).addClass('btn-primary').removeClass('btn-outline-primary');
+                icono.addClass('bi-hand-thumbs-up-fill').removeClass('bi-hand-thumbs-up');
+                const likesActuales = parseInt(contadorLikes.text()) + 1;
+                contadorLikes.text(likesActuales);
+            }
+        },
+        error: function(xhr) {
+            if (xhr.status === 409) {
+                // Si ya existe el like, lo quitamos
+                $.ajax({
+                    url: urlDominio + `/api/Likes/${idPublicacion}`,
+                    method: 'DELETE',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        idPublicacion: idPublicacion,
+                        idUsuario: idUsuarioSolicitante,
+                        llave_Secreta: llaveSecreta
+                    }),
+                    success: function() {
+                        const contadorLikes = $(button).find('.contador-likes');
+                        const icono = $(button).find('i');
+                        
+                        $(button).removeClass('btn-primary').addClass('btn-outline-primary');
+                        icono.removeClass('bi-hand-thumbs-up-fill').addClass('bi-hand-thumbs-up');
+                        const likesActuales = parseInt(contadorLikes.text()) - 1;
+                        contadorLikes.text(likesActuales);
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo quitar el me gusta'
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo procesar el me gusta'
+                });
+            }
+        }
+    });
+}
+
+// Función 7 - Publicaciones con like se van a favoritos.
+function cargarPublicacionesFavoritas() {
+    $.ajax({
+        url: urlDominio + `/api/Likes/${idUsuarioSolicitante}/${idUsuarioSolicitante}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            $('#posts-container-favoritos').empty();
+
+            if (response.length > 0) {
+                $.each(response, function(index, post) {
+                    let postHTML = `
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h5 class="card-title mb-0">${post.nombre}</h5>
+                                </div>
+                                <h6 class="card-title mb-0">${post.idUsuario}</h6>
+                                <p class="card-text">${post.contenido}</p>
+                                <p class="text-muted small">${post.fechaCreacion}</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
+                                        <i class="bi bi-hand-thumbs-up-fill"></i>
+                                        <span class="like-count">${post.cantidadLikes}</span> Me Gusta
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    $('#posts-container-favoritos').append(postHTML);
+                });
+            } else {
+                $('#posts-container-favoritos').html('<p class="text-muted">No tienes publicaciones favoritas.</p>');
+            }
+        },
+        error: function(error) {
+            $('#posts-container-favoritos').html('<p class="text-danger">Error al cargar las publicaciones favoritas.</p>');
+            console.log('Error en AJAX:', error);
+        }
+    });
+}
+
+
+if (window.location.pathname.includes('favoritos.html')) {
+    cargarPublicacionesFavoritas();
 }

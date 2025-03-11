@@ -29,51 +29,11 @@
     </header>
 
     <!-- Contenido de Favoritos -->
-    <!-- Publicaciones Recientes ajax Ejemplo-->
-    <div class="w-75 p-3" style="overflow-y: auto;">
-        <div class="post mb-4 p-5 border">
-            <div class="d-flex align-items-center mb-2">
-                <img src="perfilP.webp" alt="Foto de perfil" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                <div class="ms-3">
-                    <strong>Carlos Guevara</strong>
-                    <p class="text-muted" style="font-size: 0.9rem;">Hace 2 horas</p>
-                </div>
-            </div>
-            <div class="post-content mb-3">
-                <p>¡Aquí está mi publicación! Es un día genial para aprender a programar y compartir con ustedes. ¿Alguien más está aprendiendo algo nuevo hoy?</p>
-            </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex">
-                    <button class="btn btn-outline-primary me-2" type="button">
-                        <i class="bi bi-hand-thumbs-up"></i> Like
-                    </button>
-                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#commentSection">
-                        <i class="bi bi-chat-left-text"></i> Comentar
-                    </button>
-                </div>
-            </div>
-        </div>
-    
-        <div class="collapse" id="commentSection">
-            <div class="mb-3 p-3 border-top">
-                <div class="comment mb-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="perfilP.webp" alt="Foto de perfil" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
-                        <div class="ms-3">
-                            <strong>Maria123</strong>
-                            <p class="text-muted" style="font-size: 0.8rem;">Hace 1 hora</p>
-                        </div>
-                    </div>
-                    <p>¡Sí! Yo también estoy aprendiendo a programar en Python. Es muy divertido.</p>
-                </div>
-    
-                <div class="d-flex align-items-center">
-                    <textarea rows="2" class="form-control" placeholder="Escribe un comentario..." style="width: 100%;"></textarea>
-                    <button class="btn btn-outline-success ms-2">Comentar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Publicaciones Recientes Ejemplo-->
+    <div class="card p-3 shadow-sm">
+        <h3 class="card-title mb-3">Mis publicaciones favoritas</h3>
+        <!-- Contenedor para publicaciones dinámicas -->
+    <div id="posts-container-favoritos"></div>
     </div>
 
     <!-- Scripts -->
