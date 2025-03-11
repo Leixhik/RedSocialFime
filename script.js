@@ -43,6 +43,43 @@ function mostrarPublicaciones(){
         // Para formatear la fecha
         let fechaFormateada = new Date(pub.fechaCreacion).toLocaleString();
 
-        let card = $(``)
-    })
+        // formato de la publicacion (como en el html)
+        let card = $(`
+            <div class="card shadow-sm p-4 mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">${pub.nombre} #${pub.idUsuario}</h6>
+                        <span class="text-muted">${fechaFormateada}</span>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><button class="dropdown-item" onclick="editarPublicacion(${pub.idPublicacion})">Editar</button></li>
+                            <li><button class="dropdown-item text-danger" onclick="eliminarPublicacion(${pub.idPublicacion})">Eliminar</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <p>${pub.contenido}</p>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    // <button class="btn btn-outline-primary me-2" onclick="darMeGusta(${pub.idPublicacion})"
+                        <i class="fas fa-thumbs-up"></i> Me gusta <span class="badge bg-secondary">${pub.cantidadComentarios || 0}</span>
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="mostrarComentarios(${pub.idPublicacion})">
+                        <i class="fas fa-comment"></i> Comentar
+                    </button>
+                </div>
+                <div id="comentarios-${pub.idPublicacion}" class="comment-section"></div>
+                <div class="d-flex align-items-center mt-2">
+                    <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                    <textarea class="form-control flex-grow-1" rows="1" id="comentario-${pub.idPublicacion}" placeholder="Escribe un comentario..." style="resize: none;"></textarea>
+                    <button class="btn btn-success ms-2" onclick="agregarComentario(${pub.idPublicacion})">Enviar</button>
+                </div>
+            </div>
+            `);
+            contenedor.append(card);
+    });
 }
+
