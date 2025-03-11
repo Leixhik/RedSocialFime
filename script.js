@@ -4,7 +4,7 @@ const llaveSecreta = '5653714b-385d-4ce5-82a2-06e084a51034';
 const urlDominio = "https://redsocial.luislepe.tech";
 
 $(document).ready(function () {
-    // Función 1 - Cargar publicaciones
+    // Función 1 - Cargar publicaciones //Ya Jala
     function cargarPublicaciones() {
         $.ajax({
             url: urlDominio + `/api/Publicaciones/all/1822271`,
@@ -69,7 +69,7 @@ $(document).ready(function () {
     // Llamamos a la función al cargar la página
     cargarPublicaciones();
 
-    // Funcion 2 - Publicar un nuevo post
+    // Funcion 2 - Publicar un nuevo post // Jala pero también me da el error de .fail por alguna razón, no hallo que sea
     function crearPublicacion(publicacion) {
         $.ajax({
             url: urlDominio + `/api/Publicaciones`,
@@ -86,16 +86,20 @@ $(document).ready(function () {
         }).done(function (result) {
             crearPublicacion(result);
             $("#nuevaPublicacion").val('');
-        })
-            .fail(function (xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error al publicar',
-                    text: `Ocurrió un error al intentar publicar: ${error}`,
-                });
+            Swal.fire({
+                icon: 'success',
+                title: 'Publicación exitosa',
+                text: 'Tu publicación se ha creado con éxito.',
             });
+        }).fail(function (xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al publicar',
+                text: `Ocurrió un error al intentar publicar: ${error}`,
+            });
+        });
     }
-    $("#btnPublicar").on("click", function () {
+    $("#btnPublicar").on("click", function () {  // Ya jala, da el error de.fail con aviso de contenido vacío.
         const contenido = $("#nuevaPublicacion").val();
         if (contenido.trim() !== "") {
             crearPublicacion(contenido);
@@ -108,7 +112,7 @@ $(document).ready(function () {
         }
     });
 
-    // Función 3 - Ver mis publicaciones en perfil
+    // Función 3 - Ver mis publicaciones en perfil + botón de editar y mandar a publicaciones.html // ya jala
     function miPublicacion() {
         $.ajax({
             url: urlDominio + `/api/Publicaciones/all/1822271/1822271`,
@@ -176,24 +180,60 @@ function editarPublicacion(idPublicacion) {
     // Para que me lleve a la pagina de editar publicacion
     window.location.href = 'publicaciones.html';
 }
-// función para cargar la publicación en la pagina de editar
+
+// función para cargar la publicación en la pagina de editar //YA JALOOO, le duré bastante a este
 function cargarPublicacionParaEditar() {
-    const idPublicacion = localStorage.getItem('editarPublicacionId'); // No me anda cargando la publicación, ahorita lo corrijo
+    const idPublicacion = parseInt(localStorage.getItem('editarPublicacionId'));
+    console.log('ID recuperado:', idPublicacion); // solo es para saber el ID
+
     if (idPublicacion) {
         $.ajax({
-            url: urlDominio + `/api/Publicaciones/${idPublicacion}`,
+            url: urlDominio + `/api/Publicaciones/${idUsuarioSolicitante}/${idPublicacion}`,
             type: 'GET',
             dataType: 'json',
             success: function (post) {
-                const editFormHTML = `
-                    <div class="mb-3">
-                        <textarea class="form-control" id="editContenido" rows="3">${post.contenido}</textarea>
-                    </div>
-                    <button class="btn btn-primary" onclick="guardarEdicion(${idPublicacion})">
-                        Guardar cambios
-                    </button>
-                `;
-                $('#posts-container-mio').html(editFormHTML);
+                if (post) {
+                    let editFormHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Editar Publicación</h3>
+                                <div class="card mb-3 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <h5 class="card-title mb-0">${post.nombre}</h5>
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary btn-sm" class= "btnEditar" onclick="editarPublicacion(${post.idPublicacion})">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <h6 class="card-title mb-0">${post.idUsuario}</h6>
+                                    <p class="card-text">${post.contenido}</p>
+                                    <p class="text-muted small">${post.fechaCreacion}</p>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-hand-thumbs-up"></i> ${post.cantidadLikes} Me Gusta
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                                <button class="btn btn-primary" onclick="guardarEdicion(${post.idPublicacion})">
+                                    Guardar cambios
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    $('#posts-container-editar').html(editFormHTML);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se encontró la publicación'
+                    });
+                }
             },
             error: function (error) {
                 console.log('Error loading post:', error);
@@ -206,6 +246,8 @@ function cargarPublicacionParaEditar() {
         });
     }
 }
+
+
 // Funcion 4.5 - Guardar publicacion
 function guardarEdicion(idPublicacion) {
     const nuevoContenido = $('#editContenido').val();

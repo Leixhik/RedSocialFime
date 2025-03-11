@@ -30,45 +30,38 @@
 
     <!-- Contenido principal -->
     <div class="container mt-4">
-        <!-- Sección de tus Publicaciones -->    
-            <div class="row g-3">
-                <!-- Tarjeta de publicación 1 Ejemplo -->
-                <!-- Publicaciones recientes Ejemplo 1 -->
-                <div class="card shadow-sm p-4 mb-4">
-                    <!-- Persona de publicación -->
-                    <div class="d-flex align-items-center mb-3">
-                        <!-- foto de perfil -->
-                        <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-3"
-                            style="width: 40px; height: 40px; object-fit: cover;">
-                        <div class="flex-grow-1">
+        <!-- Sección de tus Publicaciones -->
+        <div class="row g-3">
+            <!-- Tarjeta de publicación 1 Ejemplo -->
 
-                        </div>
+            <!-- Persona de publicación -->
+            <div class="d-flex align-items-center mb-3">
+                <!-- foto de perfil -->
+                <img src="img/profilepic.png" alt="UserProfilePicture" class="rounded-circle me-3"
+                    style="width: 40px; height: 40px; object-fit: cover;">
+                <div class="flex-grow-1">
 
-                        <!-- Configuración de publicación propia-->
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Opciones
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><button class="dropdown-item">Modificar</button></li>
-                                <li><button class="dropdown-item">Borrar</button></li>
-                                <li><button class="dropdown-item">Configuración</button></li>
-                                <li><button class="dropdown-item">Reportar</button></li>
-                            </ul>
-                        </div>
-                    </div>
+                </div>
 
-                    <!-- Publicaciones Recientes Ejemplo-->
-                    <div class="card p-3 shadow-sm">
-                        <h3 class="card-title mb-3">Editar Publicación</h3>
-                        <!-- Contenedor para publicaciones dinámicas -->
-                        <div id="posts-container-editar"></div>
-                    </div>
+                <!-- Configuración de publicación propia-->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Opciones
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item">Modificar</button></li>
+                        <li><button class="dropdown-item">Borrar</button></li>
+                        <li><button class="dropdown-item">Configuración</button></li>
+                        <li><button class="dropdown-item">Reportar</button></li>
+                    </ul>
                 </div>
             </div>
+            <!-- Contenedor para publicaciones dinámicas -->
+            <div id="posts-container-editar"></div>
         </div>
     </div>
+    
 
 
     <!-- Scripts -->
