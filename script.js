@@ -19,28 +19,38 @@ $(document).ready(function () {
                     // forEach para cada publicacion
                     $.each(response, function (index, post) {
 
-                        // HTML para cada publicación
+                        // Determinar si una publicación es mía o ajena
+                        const isMyPost = post.idUsuario === idUsuarioSolicitante;
+
+                        // HTML de Posts ajenas y mias (metí un if para diferenciar las mías con isMyPost)
                         let postHTML = `
-                        <div class="card mb-3 shadow-sm">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-2">
-                                    <h5 class="card-title mb-0">${post.nombre}</h5>
-                                </div>
-                                <h6 class="card-title mb-0"> ${post.idUsuario}</h6>
-                                <p class="card-text">${post.contenido}</p>
-                                <p class="text-muted small">${post.fechaCreacion}</p>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-hand-thumbs-up"></i>${post.cantidadLikes} Me Gusta
-                                    </button>
-                                    <button class="btn btn-outline-secondary btn-sm">
-                                        <i class="bi bi-chat"></i>${post.cantidadComentarios} Comentar
-                                    </button>
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <h5 class="card-title mb-0">${post.nombre}</h5>
+                                        ${isMyPost ? `
+                                            <div class="btn-group">
+                                                <button class="btn btn-primary btn-sm" onclick="editarPublicacion(${post.idPublicacion})">
+                                                    <i class="bi bi-pencil"></i> Editar
+                                                </button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <h6 class="card-title mb-0">${post.idUsuario}</h6>
+                                    <p class="card-text">${post.contenido}</p>
+                                    <p class="text-muted small">${post.fechaCreacion}</p>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-hand-thumbs-up"></i>${post.cantidadLikes} Me Gusta
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-chat"></i>${post.cantidadComentarios} Comentar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                        // Añadir publicacion al div
+                        `;
+                        // Agregar los post al div del html 
                         $('#posts-container').append(postHTML);
                     });
                 } else {
@@ -120,7 +130,7 @@ $(document).ready(function () {
                                     <div class="d-flex align-items-center justify-content-between mb-2">
                                         <h5 class="card-title mb-0">${post.nombre}</h5>
                                         <div class="btn-group">
-                                            <button class="btn btn-primary btn-sm" onclick="editarPublicacion(${post.idPublicacion})">
+                                            <button class="btn btn-primary btn-sm" class= "btnEditar" onclick="editarPublicacion(${post.idPublicacion})">
                                                 <i class="bi bi-pencil"></i> Editar
                                             </button>
                                         </div>
@@ -160,8 +170,46 @@ $(document).ready(function () {
 });
 
 // Funcion 4 - Editar Publicación
-function editarPublicacion() {
-    const idPublicacion = localStorage.getItem("editarPublicacion");
+function editarPublicacion(idPublicacion) {
+    // para guardar el ID de la publicación
+    localStorage.setItem('editarPublicacionId', idPublicacion);
+    // Para que me lleve a la pagina de editar publicacion
+    window.location.href = 'publicaciones.html';
+}
+// función para cargar la publicación en la pagina de editar
+function cargarPublicacionParaEditar() {
+    const idPublicacion = localStorage.getItem('editarPublicacionId'); // No me anda cargando la publicación, ahorita lo corrijo
+    if (idPublicacion) {
+        $.ajax({
+            url: urlDominio + `/api/Publicaciones/${idPublicacion}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function (post) {
+                const editFormHTML = `
+                    <div class="mb-3">
+                        <textarea class="form-control" id="editContenido" rows="3">${post.contenido}</textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="guardarEdicion(${idPublicacion})">
+                        Guardar cambios
+                    </button>
+                `;
+                $('#posts-container-mio').html(editFormHTML);
+            },
+            error: function (error) {
+                console.log('Error loading post:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo cargar la publicación para editar'
+                });
+            }
+        });
+    }
+}
+// Funcion 4.5 - Guardar publicacion
+function guardarEdicion(idPublicacion) {
+    const nuevoContenido = $('#editContenido').val();
+
     if (nuevoContenido.trim() === '') {
         Swal.fire({
             icon: 'warning',
@@ -170,6 +218,7 @@ function editarPublicacion() {
         });
         return;
     }
+
     $.ajax({
         url: urlDominio + `/api/Publicaciones/${idPublicacion}`,
         method: 'PUT',
@@ -198,4 +247,14 @@ function editarPublicacion() {
             });
         }
     });
+}
+
+// Add this at the end of your $(document).ready function
+if (window.location.pathname.includes('publicaciones.html')) {
+    cargarPublicacionParaEditar();
+}
+
+// funcion para likes
+function like() {
+
 }
