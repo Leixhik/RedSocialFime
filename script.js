@@ -92,21 +92,26 @@ $(document).ready(function () {
                 idUsuario: idUsuarioSolicitante,
                 llave_Secreta: llaveSecreta,
                 contenido: publicacion
-            })
-        }).done(function (result) {
-            crearPublicacion(result);
-            $("#nuevaPublicacion").val('');
-            Swal.fire({
-                icon: 'success',
-                title: 'Publicación exitosa',
-                text: 'Tu publicación se ha creado con éxito.',
-            });
-        }).fail(function (xhr, status, error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error al publicar',
-                text: `Ocurrió un error al intentar publicar: ${error}`,
-            });
+            }),
+            success: function(result) {
+                $("#nuevaPublicacion").val('');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Publicación exitosa',
+                    text: 'Tu publicación se ha creado con éxito.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                // Recargar las publicaciones después de crear una nueva
+                miPublicacion();
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al publicar',
+                    text: `Ocurrió un error al intentar publicar: ${error}`,
+                });
+            }
         });
     }
     $("#btnPublicar").on("click", function () {  // Ya jala
@@ -161,6 +166,44 @@ $(document).ready(function () {
         </div>
     `;
     $('#posts-container-mio').before(formHTML);
+
+    // Vincular el evento click después de crear el botón
+    $("#btnPublicar").off('click').on("click", function () {
+        const contenido = $("#nuevaPublicacion").val();
+        const tiempoActual = Date.now();
+        const tiempoTranscurrido = (tiempoActual - ultimaPublicacion.timestamp) / 1000;
+    
+        if (contenido.trim().length < 3) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Publicación muy corta',
+                text: 'La publicación debe tener al menos 3 carácteres.',
+            });
+            return;
+        }
+    
+        if (contenido.trim().length > 500) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Publicación muy larga',
+                text: 'La publicación no puede exceder los 50 carácteres.',
+            });
+            return;
+        }
+    
+        if (tiempoTranscurrido <= 60) {
+            const tiempoRestante = Math.ceil(60 - tiempoTranscurrido);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Espera un momento',
+                text: `Debes esperar ${tiempoRestante} segundos antes de publicar nuevamente.`,
+            });
+            return;
+        }
+    
+        crearPublicacion(contenido);
+        ultimaPublicacion.timestamp = tiempoActual;
+    });
         $.ajax({
             url: urlDominio + `/api/Publicaciones/all/1822271/1822271`,
             type: 'GET',
@@ -561,7 +604,7 @@ function cargarPublicacionesFavoritas() {
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
                                         <i class="bi bi-hand-thumbs-up-fill"></i>
-                                        <span class="like-count">${post.cantidadLikes}</span> Me Gusta
+                                        <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                     </button>
                                     <button class="btn btn-outline-secondary btn-sm" onclick="toggleComentarios(${post.idPublicacion})">
                                         <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
@@ -653,20 +696,20 @@ function cargarComentarios(idPublicacion) {
                 $.each(response, function(index, comentario) {
                     const isMyComment = comentario.idUsuario === idUsuarioSolicitante;
                     let comentarioHTML = `
-                        <div class="comentario mb-2 p-2 border-bottom">
-                            <div class="d-flex justify-content-between">
-                                <strong>${comentario.nombre}</strong>
-                                ${isMyComment ? `
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="editarComentario(${comentario.idComentario})">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarComentario(${comentario.idComentario})">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                ` : ''}
-                            </div>
+                            <div class="comentario mb-2 p-2 border-bottom">
+                                <div class="d-flex justify-content-between">
+                                    <strong>${comentario.nombre}</strong>
+                                    ${isMyComment ? `
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editarComentario(${comentario.idComentario})">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarComentario(${comentario.idComentario}, ${idPublicacion})">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                </div>
                             <p class="mb-1">${comentario.contenido}</p>
                             <small class="text-muted">${comentario.fechaCreacion}</small>
                         </div>
@@ -727,7 +770,7 @@ function crearComentario(idPublicacion, contenido) {
 }
 
 // Función 9 - Eliminar comentario
-function eliminarComentario(idComentario) {
+function eliminarComentario(idComentario, idPublicacion) {
     Swal.fire({
         title: '¿Eliminar comentario?',
         text: "Esta acción no se puede deshacer",
@@ -745,6 +788,7 @@ function eliminarComentario(idComentario) {
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify({
+                    idComentario: idComentario,
                     idUsuario: idUsuarioSolicitante,
                     llave_Secreta: llaveSecreta
                 }),
@@ -756,15 +800,15 @@ function eliminarComentario(idComentario) {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    // Recargar los comentarios de la publicación
                     cargarComentarios(idPublicacion);
                 },
-                error: function() {
+                error: function(error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'No se pudo eliminar el comentario'
                     });
+                    console.error('Error al eliminar:', error);
                 }
             });
         }
@@ -774,7 +818,7 @@ function eliminarComentario(idComentario) {
 // Función 10 - Editar comentario
 function editarComentario(idComentario) {
     $.ajax({
-        url: urlDominio + `/api/Comentarios/${idUsuarioSolicitante}/${idComentario}`, // Corregido: idPublicacion -> idComentario
+        url: urlDominio + `/api/Comentarios/${idUsuarioSolicitante}/${idComentario}`,
         type: 'GET',
         dataType: 'json',
         success: function(comentario) {
@@ -798,10 +842,10 @@ function editarComentario(idComentario) {
                         dataType: 'json',
                         contentType: 'application/json',
                         data: JSON.stringify({
+                            idComentario: idComentario,
                             idUsuario: idUsuarioSolicitante,
                             llave_Secreta: llaveSecreta,
-                            contenido: result.value,
-                            idPublicacion: comentario.idPublicacion // Agregado: necesario para recargar los comentarios
+                            contenido: result.value
                         }),
                         success: function() {
                             Swal.fire({
@@ -836,6 +880,11 @@ function editarComentario(idComentario) {
 function verPublicacionIndividual(idPublicacion) {
     localStorage.setItem('verPublicacionId', idPublicacion);
     window.location.href = 'post.html';
+}
+
+// Cargar publicaciones favoritas al cargar la página de favoritos
+if (window.location.pathname.includes('favoritos.html')) {
+    cargarPublicacionesFavoritas();
 }
 
 
