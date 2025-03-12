@@ -42,18 +42,27 @@ $(document).ready(function () {
                                     <h6 class="card-title mb-0">${post.idUsuario}</h6>
                                     <p class="card-text">${post.contenido}</p>
                                     <p class="text-muted small">${post.fechaCreacion}</p>
-                                    <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2">
                                         <button class="btn btn-outline-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
                                             <i class="bi bi-hand-thumbs-up"></i>
                                             <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                         </button>
-                                        <button class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-chat"></i>${post.cantidadComentarios} Comentar
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleComentarios(${post.idPublicacion})">
+                                            <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
                                         </button>
                                     </div>
-                                </div>
-                            </div>
-                        `;
+                                    <div class="comentarios-section mt-3" style="display: none;" id="comentarios-section-${post.idPublicacion}">
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="nuevoComentario-${post.idPublicacion}" rows="2" placeholder="Escribe un comentario..."></textarea>
+                                            <button class="btn btn-primary btn-sm mt-2" onclick="crearComentario(${post.idPublicacion}, $('#nuevoComentario-${post.idPublicacion}').val())">
+                                                Comentar
+                                            </button>
+                                        </div>
+                                        <div id="comentarios-${post.idPublicacion}">
+                                            <!-- Aquí se cargarán los comentarios -->
+                                        </div>
+                                    </div>
+                                `;
                         // Agregar los post al div del html 
                         $('#posts-container').append(postHTML);
                     });
@@ -143,6 +152,18 @@ $(document).ready(function () {
 
     // Función 3 - Ver mis publicaciones en perfil + botón de editar y mandar a publicaciones.html // ya jala
     function miPublicacion() {
+        let formHTML = `
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Crear nueva publicación</h5>
+                <div class="mb-3">
+                    <textarea class="form-control" id="nuevaPublicacion" rows="3" placeholder="¿Qué estás pensando?"></textarea>
+                </div>
+                <button class="btn btn-success" id="btnPublicar">Publicar</button>
+            </div>
+        </div>
+    `;
+    $('#posts-container-mio').before(formHTML);
         $.ajax({
             url: urlDominio + `/api/Publicaciones/all/1822271/1822271`,
             type: 'GET',
@@ -163,7 +184,7 @@ $(document).ready(function () {
                                     <div class="d-flex align-items-center justify-content-between mb-2">
                                         <h5 class="card-title mb-0">${post.nombre}</h5>
                                         <div class="btn-group">
-                                            <button class="btn btn-primary btn-sm" class= "btnEditar" onclick="editarPublicacion(${post.idPublicacion})">
+                                            <button class="btn btn-success btn-sm" class= "btnEditar" onclick="editarPublicacion(${post.idPublicacion})">
                                                 <i class="bi bi-pencil"></i> Editar
                                             </button>
                                         </div>
@@ -176,13 +197,22 @@ $(document).ready(function () {
                                             <i class="bi bi-hand-thumbs-up"></i>
                                             <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                         </button>
-                                        <button class="btn btn-outline-secondary btn-sm">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleComentarios(${post.idPublicacion})">
                                             <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
                                         </button>
                                     </div>
-                                </div>
-                            </div>
-                        `;
+                                    <div class="comentarios-section mt-3" style="display: none;" id="comentarios-section-${post.idPublicacion}">
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="nuevoComentario-${post.idPublicacion}" rows="2" placeholder="Escribe un comentario..."></textarea>
+                                            <button class="btn btn-primary btn-sm mt-2" onclick="crearComentario(${post.idPublicacion}, $('#nuevoComentario-${post.idPublicacion}').val())">
+                                                Comentar
+                                            </button>
+                                        </div>
+                                        <div id="comentarios-${post.idPublicacion}">
+                                            <!-- Aquí se cargarán los comentarios -->
+                                        </div>
+                                    </div>
+                                `;
                         // Añadir publicacion al div
                         $('#posts-container-mio').append(postHTML);
                     });
@@ -505,6 +535,50 @@ function cargarPublicacionesFavoritas() {
 
 if (window.location.pathname.includes('favoritos.html')) {
     cargarPublicacionesFavoritas();
+}
+
+// Función 8 - Comentarios Publicos
+function cargarComentarios(idPublicacion) {
+    $.ajax({
+        url: urlDominio + `/api/Comentarios/Publicacion/${idUsuarioSolicitante}/${idPublicacion}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            const comentariosContainer = $(`#comentarios-${idPublicacion}`);
+            comentariosContainer.empty();
+
+            if (response.length > 0) {
+                $.each(response, function(index, comentario) {
+                    const isMyComment = comentario.idUsuario === idUsuarioSolicitante;
+                    let comentarioHTML = `
+                        <div class="comentario mb-2 p-2 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <strong>${comentario.nombre}</strong>
+                                ${isMyComment ? `
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editarComentario(${comentario.idComentario})">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarComentario(${comentario.idComentario})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <p class="mb-1">${comentario.contenido}</p>
+                            <small class="text-muted">${comentario.fechaCreacion}</small>
+                        </div>
+                    `;
+                    comentariosContainer.append(comentarioHTML);
+                });
+            } else {
+                comentariosContainer.html('<p class="text-muted">No hay comentarios aún.</p>');
+            }
+        },
+        error: function(error) {
+            console.error('Error al cargar comentarios:', error);
+        }
+    });
 }
 
 
