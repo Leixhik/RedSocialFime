@@ -29,16 +29,13 @@ $(document).ready(function () {
                         let postHTML = `
                             <div class="card mb-3 shadow-sm">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <h5 class="card-title mb-0">${post.nombre}</h5>
-                                        ${isMyPost ? `
-                                            <div class="btn-group">
-                                                <button class="btn btn-primary btn-sm" onclick="editarPublicacion(${post.idPublicacion})">
-                                                    <i class="bi bi-pencil"></i> Editar
-                                                </button>
-                                            </div>
-                                        ` : ''}
-                                    </div>
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <h5 class="card-title mb-0">
+                                                <a href="javascript:void(0)" onclick="verPublicacionIndividual(${post.idPublicacion})" class="text-decoration-none">
+                                                    ${post.nombre}
+                                                </a>
+                                            </h5>
+                                        </div>
                                     <h6 class="card-title mb-0">${post.idUsuario}</h6>
                                     <p class="card-text">${post.contenido}</p>
                                     <p class="text-muted small">${post.fechaCreacion}</p>
@@ -47,11 +44,11 @@ $(document).ready(function () {
                                             <i class="bi bi-hand-thumbs-up"></i>
                                             <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                         </button>
-                                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleComentarios(${post.idPublicacion})">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="cargarComentarios(${post.idPublicacion})">
                                             <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
                                         </button>
                                     </div>
-                                    <div class="comentarios-section mt-3" style="display: none;" id="comentarios-section-${post.idPublicacion}">
+                                    <div class="comentarios-section mt-3" id="comentarios-section-${post.idPublicacion}">
                                         <div class="mb-3">
                                             <textarea class="form-control" id="nuevoComentario-${post.idPublicacion}" rows="2" placeholder="Escribe un comentario..."></textarea>
                                             <button class="btn btn-primary btn-sm mt-2" onclick="crearComentario(${post.idPublicacion}, $('#nuevoComentario-${post.idPublicacion}').val())">
@@ -182,12 +179,11 @@ $(document).ready(function () {
                             <div class="card mb-3 shadow-sm">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <h5 class="card-title mb-0">${post.nombre}</h5>
-                                        <div class="btn-group">
-                                            <button class="btn btn-success btn-sm" class= "btnEditar" onclick="editarPublicacion(${post.idPublicacion})">
-                                                <i class="bi bi-pencil"></i> Editar
-                                            </button>
-                                        </div>
+                                        <h5 class="card-title mb-0">
+                                            <a href="javascript:void(0)" onclick="verPublicacionIndividual(${post.idPublicacion})" class="text-decoration-none">
+                                                ${post.nombre}
+                                            </a>
+                                        </h5>
                                     </div>
                                     <h6 class="card-title mb-0">${post.idUsuario}</h6>
                                     <p class="card-text">${post.contenido}</p>
@@ -197,11 +193,11 @@ $(document).ready(function () {
                                             <i class="bi bi-hand-thumbs-up"></i>
                                             <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
                                         </button>
-                                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleComentarios(${post.idPublicacion})">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="cargarComentarios(${post.idPublicacion})">
                                             <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
                                         </button>
                                     </div>
-                                    <div class="comentarios-section mt-3" style="display: none;" id="comentarios-section-${post.idPublicacion}">
+                                    <div class="comentarios-section mt-3" id="comentarios-section-${post.idPublicacion}">
                                         <div class="mb-3">
                                             <textarea class="form-control" id="nuevoComentario-${post.idPublicacion}" rows="2" placeholder="Escribe un comentario..."></textarea>
                                             <button class="btn btn-primary btn-sm mt-2" onclick="crearComentario(${post.idPublicacion}, $('#nuevoComentario-${post.idPublicacion}').val())">
@@ -230,7 +226,7 @@ $(document).ready(function () {
     }
 
     // Llamamos a la función al cargar la página
-    miPublicacion();
+    miPublicacion();    
 });
 
 // Funcion 4 - Ejecuta la función editar // Ya jala
@@ -414,8 +410,59 @@ function guardarEdicion(idPublicacion) {
 }
 
 // para cargar la publicación en la pagina de editar
-if (window.location.pathname.includes('publicaciones.html')) {
-    cargarPublicacionParaEditar();
+if (window.location.pathname.includes('post.html')) {
+    const idPublicacion = localStorage.getItem('verPublicacionId');
+    if (idPublicacion) {
+        $.ajax({
+            url: urlDominio + `/api/Publicaciones/${idUsuarioSolicitante}/${idPublicacion}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(post) {
+                let postHTML = `
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h5 class="card-title mb-0">
+                                    <a href="javascript:void(0)" onclick="verPublicacionIndividual(${post.idPublicacion})" class="text-decoration-none">
+                                        ${post.nombre}
+                                    </a>
+                                </h5>
+                            </div>
+                            <h6 class="card-title mb-0">${post.idUsuario}</h6>
+                            <p class="card-text">${post.contenido}</p>
+                            <p class="text-muted small">${post.fechaCreacion}</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                    <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="cargarComentarios(${post.idPublicacion})">
+                                    <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
+                                </button>
+                            </div>
+                            <div class="comentarios-section mt-3" id="comentarios-section-${post.idPublicacion}">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="nuevoComentario-${post.idPublicacion}" rows="2" placeholder="Escribe un comentario..."></textarea>
+                                    <button class="btn btn-primary btn-sm mt-2" onclick="crearComentario(${post.idPublicacion}, $('#nuevoComentario-${post.idPublicacion}').val())">
+                                        Comentar
+                                    </button>
+                                </div>
+                                <div id="comentarios-${post.idPublicacion}">
+                                    <!-- Aquí se cargarán los comentarios -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#post-individual-container').html(postHTML);
+                cargarComentarios(post.idPublicacion);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                $('#post-individual-container').html('<p class="text-danger">Error al cargar la publicación.</p>');
+            }
+        });
+    }
 }
 
 // Función 6 - Likes
@@ -502,8 +549,12 @@ function cargarPublicacionesFavoritas() {
                         <div class="card mb-3 shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <h5 class="card-title mb-0">${post.nombre}</h5>
-                                </div>
+                                        <h5 class="card-title mb-0">
+                                            <a href="javascript:void(0)" onclick="verPublicacionIndividual(${post.idPublicacion})" class="text-decoration-none">
+                                                ${post.nombre}
+                                            </a>
+                                        </h5>
+                                    </div>
                                 <h6 class="card-title mb-0">${post.idUsuario}</h6>
                                 <p class="card-text">${post.contenido}</p>
                                 <p class="text-muted small">${post.fechaCreacion}</p>
@@ -512,7 +563,7 @@ function cargarPublicacionesFavoritas() {
                                         <i class="bi bi-hand-thumbs-up-fill"></i>
                                         <span class="like-count">${post.cantidadLikes}</span> Me Gusta
                                     </button>
-                                    <button class="btn btn-outline-secondary btn-sm">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="toggleComentarios(${post.idPublicacion})">
                                         <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
                                     </button>
                                 </div>
@@ -533,8 +584,59 @@ function cargarPublicacionesFavoritas() {
 }
 
 
-if (window.location.pathname.includes('favoritos.html')) {
-    cargarPublicacionesFavoritas();
+if (window.location.pathname.includes('post.html')) {
+    const idPublicacion = localStorage.getItem('verPublicacionId');
+    if (idPublicacion) {
+        $.ajax({
+            url: urlDominio + `/api/Publicaciones/${idUsuarioSolicitante}/${idPublicacion}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(post) {
+                let postHTML = `
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h5 class="card-title mb-0">
+                                    <a href="javascript:void(0)" onclick="verPublicacionIndividual(${post.idPublicacion})" class="text-decoration-none">
+                                        ${post.nombre}
+                                    </a>
+                                </h5>
+                            </div>
+                            <h6 class="card-title mb-0">${post.idUsuario}</h6>
+                            <p class="card-text">${post.contenido}</p>
+                            <p class="text-muted small">${post.fechaCreacion}</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="toggleLike(${post.idPublicacion}, this)">
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                    <span class="contador-likes">${post.cantidadLikes}</span> Me Gusta
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="cargarComentarios(${post.idPublicacion})">
+                                    <i class="bi bi-chat"></i> ${post.cantidadComentarios} Comentar
+                                </button>
+                            </div>
+                            <div class="comentarios-section mt-3" id="comentarios-section-${post.idPublicacion}">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="nuevoComentario-${post.idPublicacion}" rows="2" placeholder="Escribe un comentario..."></textarea>
+                                    <button class="btn btn-primary btn-sm mt-2" onclick="crearComentario(${post.idPublicacion}, $('#nuevoComentario-${post.idPublicacion}').val())">
+                                        Comentar
+                                    </button>
+                                </div>
+                                <div id="comentarios-${post.idPublicacion}">
+                                    <!-- Aquí se cargarán los comentarios -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#post-individual-container').html(postHTML);
+                cargarComentarios(post.idPublicacion);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                $('#post-individual-container').html('<p class="text-danger">Error al cargar la publicación.</p>');
+            }
+        });
+    }
 }
 
 // Función 8 - Comentarios Publicos
@@ -579,6 +681,161 @@ function cargarComentarios(idPublicacion) {
             console.error('Error al cargar comentarios:', error);
         }
     });
+}
+
+
+// Funcion 9 - Crear comentario
+function crearComentario(idPublicacion, contenido) {
+    if (contenido.trim() === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campo vacío',
+            text: 'El comentario no puede estar vacío'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: urlDominio + '/api/Comentarios',
+        method: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            idPublicacion: idPublicacion,
+            idUsuario: idUsuarioSolicitante,
+            llave_Secreta: llaveSecreta,
+            contenido: contenido
+        }),
+        success: function(response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Comentario publicado',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            $(`#nuevoComentario-${idPublicacion}`).val('');
+            cargarComentarios(idPublicacion);
+        },
+        error: function(error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo publicar el comentario'
+            });
+        }
+    });
+}
+
+// Función 9 - Eliminar comentario
+function eliminarComentario(idComentario) {
+    Swal.fire({
+        title: '¿Eliminar comentario?',
+        text: "Esta acción no se puede deshacer",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: urlDominio + `/api/Comentarios/${idComentario}`,
+                method: 'DELETE',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    idUsuario: idUsuarioSolicitante,
+                    llave_Secreta: llaveSecreta
+                }),
+                success: function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: 'El comentario ha sido eliminado.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    // Recargar los comentarios de la publicación
+                    cargarComentarios(idPublicacion);
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo eliminar el comentario'
+                    });
+                }
+            });
+        }
+    });
+}
+
+// Función 10 - Editar comentario
+function editarComentario(idComentario) {
+    $.ajax({
+        url: urlDominio + `/api/Comentarios/${idUsuarioSolicitante}/${idComentario}`, // Corregido: idPublicacion -> idComentario
+        type: 'GET',
+        dataType: 'json',
+        success: function(comentario) {
+            Swal.fire({
+                title: 'Editar comentario',
+                input: 'textarea',
+                inputValue: comentario.contenido,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (!value.trim()) {
+                        return 'El comentario no puede estar vacío';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: urlDominio + `/api/Comentarios/${idComentario}`,
+                        method: 'PUT',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            idUsuario: idUsuarioSolicitante,
+                            llave_Secreta: llaveSecreta,
+                            contenido: result.value,
+                            idPublicacion: comentario.idPublicacion // Agregado: necesario para recargar los comentarios
+                        }),
+                        success: function() {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Comentario actualizado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            cargarComentarios(comentario.idPublicacion);
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se pudo actualizar el comentario'
+                            });
+                        }
+                    });
+                }
+            });
+        },
+        error: function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo cargar el comentario'
+            });
+        }
+    });
+}
+
+function verPublicacionIndividual(idPublicacion) {
+    localStorage.setItem('verPublicacionId', idPublicacion);
+    window.location.href = 'post.html';
 }
 
 
